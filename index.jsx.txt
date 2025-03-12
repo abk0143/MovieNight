@@ -1,0 +1,104 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Video, Mic, VideoOff, MessageCircle, Globe, Lock, UserPlus } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function MovieNight() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [storedCredentials, setStoredCredentials] = useState(
+    JSON.parse(localStorage.getItem("userCredentials")) || null
+  );
+
+  const handleRegister = () => {
+    if (username && password) {
+      localStorage.setItem("userCredentials", JSON.stringify({ username, password }));
+      setStoredCredentials({ username, password });
+      setIsRegistering(false);
+      alert("Account created! Please log in.");
+    }
+  };
+
+  const handleLogin = () => {
+    if (storedCredentials && username === storedCredentials.username && password === storedCredentials.password) {
+      setIsLoggedIn(true);
+    } else {
+      alert("Invalid credentials. Please try again.");
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 p-4 bg-[url('/path-to-graffiti-bg.jpg')] bg-[url('/path-to-girly-cartoon-left.png')] bg-left bg-no-repeat bg-[url('/path-to-girly-cartoon-right.png')] bg-right bg-no-repeat bg-cover">
+        <motion.div className="text-3xl font-bold text-pink-600" animate={{ scale: [1, 1.1, 1] }}>
+          {isRegistering ? "Create an Account" : "Welcome Luv Bug ❤️"}
+        </motion.div>
+        <Card className="w-full max-w-md mt-4 bg-white shadow-xl rounded-2xl p-4">
+          <CardContent className="flex flex-col items-center">
+            <Input placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} className="mb-2" />
+            <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="mb-2" />
+            {isRegistering ? (
+              <Button onClick={handleRegister} className="bg-purple-500 hover:bg-purple-600 text-white">
+                <UserPlus className="mr-2" /> Register
+              </Button>
+            ) : (
+              <Button onClick={handleLogin} className="bg-pink-500 hover:bg-pink-600 text-white">
+                <Lock className="mr-2" /> Login
+              </Button>
+            )}
+            <Button
+              onClick={() => setIsRegistering(!isRegistering)}
+              className="mt-2 text-pink-600 underline bg-transparent"
+            >
+              {isRegistering ? "Back to Login" : "Create an Account"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-pink-100 p-4 bg-[url('/path-to-girly-cartoon-bg.jpg')] bg-cover">
+      <motion.div className="text-3xl font-bold text-pink-600" animate={{ scale: [1, 1.1, 1] }}>
+        Movie Night
+      </motion.div>
+      
+      <Card className="w-full max-w-2xl mt-4 bg-white shadow-xl rounded-2xl p-4">
+        <CardContent className="flex flex-col items-center">
+          <div className="flex gap-4 mb-4">
+            <Button className="bg-pink-400 hover:bg-pink-500 text-white">
+              <Video /> Video
+            </Button>
+            <Button className="bg-purple-400 hover:bg-purple-500 text-white">
+              <Mic /> Voice
+            </Button>
+            <Button className="bg-blue-400 hover:bg-blue-500 text-white">
+              <Globe /> Share Browser
+            </Button>
+          </div>
+          <iframe 
+            src="https://sbldr.com" 
+            className="w-full h-64 bg-gray-100 rounded-xl border" 
+            allow="autoplay; encrypted-media"
+          ></iframe>
+          <div className="w-full p-4 h-64 bg-gray-100 rounded-xl overflow-auto flex flex-col mt-4">
+            <div className="bg-pink-200 text-pink-900 p-2 rounded-xl mb-2 w-fit max-w-xs">
+              Chat will be here
+            </div>
+          </div>
+          <div className="text-center text-gray-500 text-sm mt-4">
+            © {new Date().getFullYear()} Movie Night. All rights reserved.
+          </div>
+          <div className="text-center text-gray-500 text-sm mt-2">
+            <a href="/terms" className="underline">Terms of Use</a> | <a href="/privacy" className="underline">Privacy Policy</a>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
